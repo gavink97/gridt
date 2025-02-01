@@ -1,0 +1,70 @@
+{
+    "manifest_version": 3,
+    "name": "gridt",
+    "version": "1.0",
+    "description": "CSS Grids for modern web developers.",
+    "author": "Gavin Kondrath",
+    "homepage_url": "https://github.com/gavink97/gridt",
+
+    "icons": {
+        "48": "icons/icon-48.png",
+        "96": "icons/icon-96.png"
+    },
+
+    "web_accessible_resources": [
+        {
+            "resources": ["images/kofi_symbol.webp"],
+            "matches": ["*://*/*"]
+        }
+
+    ],
+
+    "permissions": [
+        "storage",
+        "activeTab",
+        "tabs",
+        "scripting",
+        "webNavigation"
+    ],
+
+    "host_permissions": [
+        "<all_urls>"
+    ],
+
+    "action": {
+        "default_icon": {
+            "16": "icons/icon-16.png",
+            "32": "icons/icon-32.png"
+        },
+        "default_title": "gridt",
+        "default_popup": "./src/popup/index.html"
+    },
+
+    "content_security_policy": {
+        "extension_pages": "default-src 'self'"
+    },
+
+    "commands": {
+        "toggle-feature": {
+            "suggested_key": {
+                "default": "Ctrl+Period"
+            },
+            "description": "Toggle grid"
+        }
+    },
+
+    "background": {
+        "scripts": ["./dist/background/background.js"],
+        "type": "module"
+    },
+
+    "options_ui": {
+        "page": "./src/popup/options.html"
+    },
+
+    "browser_specific_settings": {
+        "gecko": {
+            "id": "gavin@gav.ink"
+        }
+    }
+}

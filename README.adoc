@@ -1,0 +1,80 @@
+= Gridt - A highly customizable CSS Grid overlay for web developers
+ifdef::env-github[]
+Gavin Kondrath <78187175+gavink97@users.noreply.github.com>
+v1.0.0, 2025-01-31
+:homepage: https://github.com/gavink97/gridt
+endif::[]
+:toc:
+:toc-placement!:
+:icons: font
+:imagesdir: ./images
+
+Gridt, a nifty, highly customizable grid overlay perfect for grid based layouts.
+
+image::gridt.jpg["Gridt Screenshot", 800, 400]
+
+toc::[]
+
+== Features
+    - Customizable Columns, Rows, Grid Gaps, & Outside Margin!
+    - Attach grid to window or html element via CSS Selectors!
+    - Use your own grid-template-columns / rows for uneven grids!
+    - Grid stays open on hot reload!
+    - Adjustable line color & stroke width!
+    - Light Mode & Developer Mode 😎
+
+== Getting Started
+
+=== Installation
+
+Gridt is available for download on addons.mozilla.org (AMO)
+
+https://addons.mozilla.org/en-US/firefox/addon/gridt
+
+=== Build from source
+
+```
+gh repo clone gavink97/gridt .
+cd gridt
+npm install
+make eb
+make build
+```
+
+=== Using the Gridt
+
+Now that you have Gridt installed you can start adjust columns, rows, outside
+margin (of even length), and grid gaps using the basic settings. You can also
+keep your grid attached to the window or attach to an html element by using css
+selectors.
+
+In the advanced settings you can input your own grid-template-columns or rows
+for uneven grid layouts, customize the outside margins individually, customize
+grid line color and stroke, and toggle to keep the grid open on hot reload.
+
+Out of the box you can toggle the grid with `Cmd/Ctrl + .` or you can change
+your keybinding in the settings.
+
+== Contributing
+
+I'm open to contributions.
+
+== Support
+
+If you're feeling generous you can support this project and others I make on
+https://ko-fi.com/E1E119NG8M[Ko-fi] :)
+
+== Star
+
+If you've found this useful please give it a star ⭐️ as it helps other developers
+find my repos.
+
+++++
+<a href="https://star-history.com/#gavink97/gridt&Date">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=gavink97/gridt&type=Date&theme=dark" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=gavink97/gridt&type=Date" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=gavink97/gridt&type=Date" />
+ </picture>
+</a>
+++++

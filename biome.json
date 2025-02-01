@@ -1,0 +1,60 @@
+{
+    "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+    "organizeImports": {
+        "enabled": true
+    },
+    "formatter": {
+        "enabled": true,
+        "formatWithErrors": false,
+        "ignore": ["**/*.min.js"],
+        "attributePosition": "auto",
+        "indentStyle": "tab",
+        "indentWidth": 4,
+        "lineWidth": 120,
+        "lineEnding": "lf"
+    },
+    "linter": {
+        "enabled": true,
+        "rules": {
+            "recommended": true,
+        "correctness": {
+                "useExhaustiveDependencies": "error",
+                "useHookAtTopLevel": "error",
+                "noUnusedImports": "error"
+            },
+        "nursery": {
+                "noSecrets": "error",
+                "noCommonJs": "error",
+                "useStrictMode": "error",
+                "noDescendingSpecificity": "warn",
+                "noMissingVarFunction": "error",
+                "noUnknownTypeSelector": "warn"
+            },
+        "suspicious": {
+                "noExplicitAny":"off"
+            }
+        }
+    },
+    "javascript": {
+        "formatter": {
+            "enabled": true,
+            "arrowParentheses": "always",
+            "bracketSameLine": false,
+            "bracketSpacing": true,
+            "quoteStyle": "single",
+            "jsxQuoteStyle": "single",
+            "quoteProperties": "asNeeded",
+            "semicolons": "always",
+            "trailingCommas": "all"
+        },
+        "linter": {
+            "enabled": true
+        }
+    },
+    "json": {
+        "formatter": {
+            "enabled": false,
+            "trailingCommas": "none"
+        }
+    }
+}

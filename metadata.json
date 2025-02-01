@@ -1,0 +1,14 @@
+{
+  "version": { "license": "MPL-2.0" },
+  "categories": { "firefox": ["shopping", "bookmarks"] },
+  "contributions_url": "https://donate.mozilla.org",
+  "requires_payment": false,
+  "homepage": {
+    "en-US": "http://example.org?lang=en-US",
+    "fr": "http://example.org?lang=fr"
+  },
+  "support_email": {
+    "en-US": "support@example.org",
+    "fr": "support-fr@example.org"
+  }
+}
