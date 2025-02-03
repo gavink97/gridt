@@ -7,11 +7,16 @@ endif::[]
 :toc:
 :toc-placement!:
 :icons: font
-:imagesdir: ./images
 
 Gridt, a nifty, highly customizable grid overlay perfect for grid based layouts.
 
-image::gridt.jpg["Gridt Screenshot", 800, 400]
+++++
+<a href="https://addons.mozilla.org/en-US/firefox/addon/gridt">
+ <picture>
+   <img alt="gridt screenshot" src="./images/gridt.jpg" />
+ </picture>
+</a>
+++++
 
 toc::[]
 

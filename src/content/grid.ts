@@ -66,6 +66,8 @@ function adjustMargin(element: HTMLElement, vars: Config): HTMLElement {
 	const right = validateUnit(vars.extra.right.value ?? vars.extra.right.default_value);
 	const useWindow = vars.useWindow.value ?? vars.useWindow.default_value;
 	const attached = vars.attachedElement.value ?? vars.attachedElement.default_value;
+	const scrollX = window.scrollX;
+	const scrollY = window.scrollY;
 
 	let rects: DOMRect;
 	let leftValue: number;
@@ -103,10 +105,13 @@ function adjustMargin(element: HTMLElement, vars: Config): HTMLElement {
 			element.style.inset = '0px';
 
 			value = Number.parseInt(margin);
+			topValue = rects.top + scrollY;
+			leftValue = rects.left + scrollX;
+
 			element.style.width = `${rects.width - value * 2}px`;
 			element.style.height = `${rects.height - value * 2}px`;
-			element.style.top = `${value + rects.top}px`;
-			element.style.left = `${value + rects.left}px`;
+			element.style.top = `${value + topValue}px`;
+			element.style.left = `${value + leftValue}px`;
 
 			break;
 
@@ -122,8 +127,8 @@ function adjustMargin(element: HTMLElement, vars: Config): HTMLElement {
 
 			element.style.width = `${rects.width - (leftValue + rightValue)}px`;
 			element.style.height = `${rects.height - (topValue + bottomValue)}px`;
-			element.style.top = `${topValue + rects.top}px`;
-			element.style.left = `${leftValue + rects.left}px`;
+			element.style.top = `${topValue + (rects.top + scrollY)}px`;
+			element.style.left = `${leftValue + (rects.left + scrollX)}px`;
 			break;
 
 		default:
