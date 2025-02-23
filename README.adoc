@@ -36,6 +36,10 @@ Gridt is available for download on addons.mozilla.org (AMO)
 
 https://addons.mozilla.org/en-US/firefox/addon/gridt
 
+Gridt is now available for download on the Chrome Web Store
+
+https://chromewebstore.google.com/detail/gijangdmilikehdjjipfhjbehcmajkpe
+
 === Build from source
 
 ```

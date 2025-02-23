@@ -1,7 +1,5 @@
-import Browser from 'webextension-polyfill';
 import type { Action, ResponseSender } from '../utils/types.ts';
 import { CSSGrid, GridPresence, GridVisible, HideGrid, RemoveGrid, ShowGrid } from './grid.ts';
-const browser = Browser;
 
 function receiver(request: Action, sender: browser.runtime.MessageSender, sendResponse: ResponseSender) {
 	let visibility: boolean;

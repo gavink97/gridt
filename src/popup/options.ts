@@ -1,6 +1,3 @@
-import Browser from 'webextension-polyfill';
-const browser = Browser;
-
 const commandName = 'toggle-feature';
 
 function saveOptions(e: Event) {

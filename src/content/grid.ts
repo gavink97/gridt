@@ -159,6 +159,7 @@ export function CSSGrid(variables: Config) {
 	grid.style.overflow = 'hidden';
 	grid.style.pointerEvents = 'none';
 	grid.style.gap = gaps;
+	grid.style.zIndex = '10000';
 
 	if (!useExtra) {
 		grid.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;

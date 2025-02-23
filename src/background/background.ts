@@ -1,12 +1,10 @@
-import Browser from 'webextension-polyfill';
 import { defaultVariables } from '../utils/default-variables.ts';
 import type { Action, Config, ResponseSender } from '../utils/types.ts';
-const browser = Browser;
 
 function handleError(error: any) {
 	const message = {
-		error: error,
-		response: error,
+		error: String(error),
+		response: String(error),
 		type: 'error',
 	};
 
@@ -125,6 +123,7 @@ function receiver(request: Action, sender: browser.runtime.MessageSender, sendRe
 function getCurrentUrl() {
 	const gettingCurrent = browser.tabs.query({ active: true, currentWindow: true });
 
+	// this will error if on an invalid tab
 	gettingCurrent.then((tabInfo) => {
 		lastUrl = tabInfo[0].url;
 	});

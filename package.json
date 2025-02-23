@@ -1,12 +1,12 @@
 {
   "name": "gridt",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "author": "Gavin Kondrath",
   "email": "78187175+gavink97@users.noreply.github.com",
   "homepage": "https://gav.ink",
   "github": "https://github.com/gavink97",
   "license": "MIT",
-  "description": "",
+  "description": "Gridt - A highly customizable CSS Grid overlay for web developers",
   "type": "module",
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
@@ -19,6 +19,7 @@
     "@types/webextension-polyfill": "^0.12.1",
     "autoprefixer": "^10.4.20",
     "cssnano": "^7.0.6",
+    "dotenv": "^16.4.7",
     "esbuild": "^0.24.2",
     "esbuild-plugin-glsl": "^1.2.2",
     "postcss": "^8.5.1",

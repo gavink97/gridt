@@ -1,6 +1,6 @@
 .PHONY: run
 run:
-	web-ext run --devtools --browser-console --reload
+	web-ext run --devtools --browser-console --reload --no-config-discovery
 
 .PHONY: lint
 lint:

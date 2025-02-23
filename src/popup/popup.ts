@@ -1,11 +1,9 @@
-import Browser from 'webextension-polyfill';
 import type { Config, Message, ResponseSender } from '../utils/types.ts';
 import { getVariables, restoreOptions } from './values.ts';
-const browser = Browser;
 
 // log this out in a file for catching errors
 function handleResponse(response: Partial<Message>) {
-	//console.log(`Message from the background script: ${message.response}`);
+	//console.log(`Message from the background script: ${response.response}`);
 	if (!response) {
 		handleError({
 			type: 'error',
@@ -16,7 +14,7 @@ function handleResponse(response: Partial<Message>) {
 }
 
 function handleError(response: Partial<Message>) {
-	const errorElement = <HTMLLinkElement>document.getElementById('error-content');
+	const errorElement = <HTMLAnchorElement>document.getElementById('error-content');
 
 	const body =
 		'Please check if an issue containing this error exists before submitting. Also try to provide any steps we can use to reproduce the error.';

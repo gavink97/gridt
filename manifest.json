@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "gridt",
-    "version": "1.0",
+    "version": "1.0.2",
     "description": "CSS Grids for modern web developers.",
     "author": "Gavin Kondrath",
     "homepage_url": "https://github.com/gavink97/gridt",

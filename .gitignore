@@ -4,7 +4,9 @@ dist
 .DS_Store
 web-ext-artifacts
 .tmp
-
+.amo-upload-uuid
+.env
+package-lock.json
 # Playwright
 /test-results/
 /playwright-report/
