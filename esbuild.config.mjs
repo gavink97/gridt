@@ -13,6 +13,7 @@ export async function build() {
 
     const entryPoints = [
         './src/**/*.ts',
+        './src/**/*.tsx',
         './src/**/*.glsl',
         './src/popup/styles.css'
     ]

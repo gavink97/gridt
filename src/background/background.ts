@@ -1,6 +1,8 @@
 import { defaultVariables } from '../utils/default-variables.ts';
 import type { Action, Config, ResponseSender } from '../utils/types.ts';
 
+let Storage: Config;
+
 function handleError(error: any) {
 	const message = {
 		error: String(error),
@@ -12,6 +14,12 @@ function handleError(error: any) {
 }
 
 function handleResponse(message: any) {
+	const response = {
+		response: String(message),
+		type: 'message',
+	};
+
+	browser.runtime.sendMessage(response);
 	if (!message) {
 		console.error('Expected a response from content script but received nothing.');
 	}
@@ -22,12 +30,9 @@ function handleResponse(message: any) {
 function messageTab(tabs: browser.tabs.Tab[], message: any): any {
 	const current = tabs[0].id;
 
-	return browser.tabs
-		.sendMessage(current, message)
-		.then(handleResponse)
-		.catch((error) => {
-			throw error;
-		});
+	return browser.tabs.sendMessage(current, message).catch((error) => {
+		throw error;
+	});
 }
 
 function inject(tabs: browser.tabs.Tab[], message: any): any {
@@ -56,16 +61,22 @@ function sendMessageToClient(request: Action, sender: browser.runtime.MessageSen
 				})
 				.catch((error: any) => {
 					handleError(error);
-					sendResponse({ type: 'error', response: error, error: error });
+
+					if (sendResponse) {
+						sendResponse({ type: 'error', response: error, error: error });
+					}
 				});
 		})
 		.catch((error) => {
 			handleError(error);
-			sendResponse({
-				type: 'error',
-				response: `An error ocurred when communicating with the content script: ${error}`,
-				error: error.message,
-			});
+
+			if (sendResponse) {
+				sendResponse({
+					type: 'error',
+					response: `An error ocurred when communicating with the content script: ${error}`,
+					error: error.message,
+				});
+			}
 		});
 }
 
@@ -100,6 +111,7 @@ function receiver(request: Action, sender: browser.runtime.MessageSender, sendRe
 
 			case 'update-grid':
 				try {
+					storeVariables(request.variables);
 					sendMessageToClient(request, sender, sendResponse);
 					break;
 				} catch {
@@ -129,11 +141,22 @@ function getCurrentUrl() {
 	});
 }
 
+function storeVariables(variables: Config) {
+	browser.storage.session.set({ config: variables });
+	Storage = variables;
+}
+
 async function checkOnReload() {
 	try {
-		const local = (await browser.storage.local.get()) as Config;
+		const result = await browser.storage.session.get('config');
+		if (!result.config) {
+			await browser.storage.session.set({
+				config: defaultVariables,
+			});
+		}
 
-		if (local.extra.onReload.value || local.extra.onReload.default_value) {
+		Storage = result.config as Config;
+		if (Storage.extra.onReload.value || Storage.extra.onReload.default_value) {
 			const current = await browser.tabs.query({ active: true, currentWindow: true });
 
 			if (current[0].url !== lastUrl) {
@@ -143,7 +166,7 @@ async function checkOnReload() {
 
 			const request = {
 				action: 'show-grid',
-				variables: local,
+				variables: Storage,
 			};
 
 			browser.tabs
@@ -187,23 +210,14 @@ function checkGridState() {
 }
 
 function command() {
-	let local: Config | undefined;
-
-	browser.storage.local
-		.get()
-		.then((result: Config) => {
-			local = result;
-		})
-		.catch((error: any) => {
-			handleError(error);
-		});
-
 	const request = {
 		action: visible ? 'hide-grid' : 'show-grid',
-		variables: local || defaultVariables,
+		variables: Storage,
 	};
 
-	receiver(request, null, null);
+	receiver(request, undefined, undefined);
+
+	handleResponse('Pushing command');
 }
 
 let visible = false;

@@ -3,14 +3,18 @@ import { getVariables, restoreOptions } from './values.ts';
 
 // log this out in a file for catching errors
 function handleResponse(response: Partial<Message>) {
-	//console.log(`Message from the background script: ${response.response}`);
-	if (!response) {
-		handleError({
-			type: 'error',
-			response: 'Expected a response from background page but received nothing.',
-			error: 'Expected a response from background page but received nothing.',
-		});
+	if (response) {
+		//console.log(`Message from the background script: ${response.response}`);
+		return true;
 	}
+
+	handleError({
+		type: 'error',
+		response: 'Expected a response from background page but received nothing.',
+		error: 'Expected a response from background page but received nothing.',
+	});
+
+	return false;
 }
 
 function handleError(response: Partial<Message>) {
@@ -43,7 +47,7 @@ function handleError(response: Partial<Message>) {
 }
 
 function storeVariables(variables: Config): any {
-	browser.storage.local.set(variables).then(null, handleError);
+	browser.storage.session.set({ config: variables });
 }
 
 // combine these checkbox functions
@@ -124,8 +128,8 @@ function attachedWindow() {
 
 async function onPopupOpen() {
 	try {
-		const local = await browser.storage.local.get();
-		restoreOptions(<Config>local);
+		const storage = await browser.storage.session.get('config');
+		restoreOptions(storage.config as Config);
 	} catch (error) {
 		handleError(error);
 	}
@@ -196,9 +200,20 @@ function messenger(e: Event) {
 }
 
 function receiver(response: Partial<Message>, sender: any, sendResponse: ResponseSender) {
-	if (response.type === 'error') {
-		handleError(response);
-		sendResponse({ type: 'message', response: 'received error' });
+	if (response) {
+		switch (response.type) {
+			case 'error':
+				handleError(response);
+				break;
+
+			case 'message':
+				handleResponse(response);
+				sendResponse({ response: 'ty' });
+				break;
+
+			default:
+				handleError(response);
+		}
 		return true;
 	}
 	return false;

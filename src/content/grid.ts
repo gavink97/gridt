@@ -151,79 +151,110 @@ export function CSSGrid(variables: Config) {
 	const stroke = validateUnit(variables.extra.stroke.value ?? variables.extra.stroke.default_value);
 	const color = variables.extra.color.value ?? variables.extra.color.default_value;
 
-	let grid = document.createElement('grid');
-	grid = adjustMargin(grid, variables);
+	function create() {
+		let grid = document.createElement('gridt');
+		grid = adjustMargin(grid, variables);
 
-	grid.id = 'gridt';
-	grid.style.display = 'grid';
-	grid.style.overflow = 'hidden';
-	grid.style.pointerEvents = 'none';
-	grid.style.gap = gaps;
-	grid.style.zIndex = '10000';
+		grid.id = 'gridt';
+		grid.style.display = 'grid';
+		grid.style.overflow = 'hidden';
+		grid.style.pointerEvents = 'none';
+		grid.style.gap = gaps;
+		grid.style.zIndex = '10000';
 
-	if (!useExtra) {
-		grid.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
-		grid.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
-	} else {
-		grid.style.gridTemplateColumns = extraColumns;
-		grid.style.gridTemplateRows = extraRows;
+		if (!useExtra) {
+			grid.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
+			grid.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
+		} else {
+			grid.style.gridTemplateColumns = extraColumns;
+			grid.style.gridTemplateRows = extraRows;
 
-		columns = enumerateInput(extraColumns);
-		rows = enumerateInput(extraRows);
+			columns = enumerateInput(extraColumns);
+			rows = enumerateInput(extraRows);
+		}
+
+		// combine these if possible
+		// need to draw a line at the end if %s are used
+		for (const x of Array(columns).keys()) {
+			const line = document.createElement('gridt-column');
+			line.style.width = stroke;
+			line.style.backgroundColor = color;
+
+			line.style.gridColumn = String(x + 1);
+			line.style.gridRow = `1 / ${rows + 1}`;
+
+			grid.appendChild(line);
+		}
+
+		for (const x of Array(columns).keys()) {
+			const line = document.createElement('gridt-column');
+			line.style.width = stroke;
+			line.style.backgroundColor = color;
+			line.style.justifySelf = 'end';
+
+			line.style.gridColumn = String(x + 1);
+			line.style.gridRow = `1 / ${rows + 1}`;
+
+			grid.appendChild(line);
+		}
+
+		for (const x of Array(rows).keys()) {
+			const line = document.createElement('gridt-row');
+			line.style.height = stroke;
+			line.style.backgroundColor = color;
+
+			line.style.gridColumn = `1 / ${columns + 1}`;
+			line.style.gridRow = String(x + 1);
+
+			grid.appendChild(line);
+		}
+
+		for (const x of Array(rows).keys()) {
+			const line = document.createElement('gridt-row');
+			line.style.height = stroke;
+			line.style.backgroundColor = color;
+			line.style.alignSelf = 'end';
+
+			line.style.gridColumn = `1 / ${columns + 1}`;
+			line.style.gridRow = String(x + 1);
+
+			grid.appendChild(line);
+		}
+		return grid;
 	}
 
-	// combine these if possible
-	// need to draw a line at the end if %s are used
-	for (const x of Array(columns).keys()) {
-		const line = document.createElement('gridline');
-		line.style.width = stroke;
-		line.style.backgroundColor = color;
-
-		line.style.gridColumn = String(x + 1);
-		line.style.gridRow = `1 / ${rows + 1}`;
-
-		grid.appendChild(line);
+	function listener(element: HTMLElement) {
+		if (GridVisible()) {
+			RemoveGrid();
+			grid = create();
+			element.appendChild(grid);
+		} else {
+			RemoveGrid();
+		}
 	}
 
-	for (const x of Array(columns).keys()) {
-		const line = document.createElement('gridline');
-		line.style.width = stroke;
-		line.style.backgroundColor = color;
-		line.style.justifySelf = 'end';
-
-		line.style.gridColumn = String(x + 1);
-		line.style.gridRow = `1 / ${rows + 1}`;
-
-		grid.appendChild(line);
-	}
-
-	for (const x of Array(rows).keys()) {
-		const line = document.createElement('gridline');
-		line.style.height = stroke;
-		line.style.backgroundColor = color;
-
-		line.style.gridColumn = `1 / ${columns + 1}`;
-		line.style.gridRow = String(x + 1);
-
-		grid.appendChild(line);
-	}
-
-	for (const x of Array(rows).keys()) {
-		const line = document.createElement('gridline');
-		line.style.height = stroke;
-		line.style.backgroundColor = color;
-		line.style.alignSelf = 'end';
-
-		line.style.gridColumn = `1 / ${columns + 1}`;
-		line.style.gridRow = String(x + 1);
-
-		grid.appendChild(line);
-	}
+	let grid = create();
 
 	if (!useWindow) {
 		document.querySelector(attached).appendChild(grid);
+
+		window.removeEventListener('resize', () => {
+			listener(document.body);
+		});
+
+		window.addEventListener('resize', () => {
+			listener(document.querySelector(attached));
+		});
 	} else {
 		document.body.appendChild(grid);
+
+		window.removeEventListener('resize', () => {
+			listener(document.querySelector(attached));
+		});
+
+		window.addEventListener('resize', () => {
+			listener(document.body);
+		});
 	}
 }
 
