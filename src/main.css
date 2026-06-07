@@ -1,0 +1,19 @@
+:root {
+	color-scheme: light dark;
+
+	--body-height: 21.25rem;
+	--body-width: 32.5rem;
+	--body-padding: 1.25rem;
+
+	--light-bg: ghostwhite;
+	--light-button: #bfbfff;
+	--light-hover: #9292fe;
+	--light-color: darkslategray;
+
+	--dark-bg: #26242d;
+	--dark-button: #5b5d64;
+	--dark-hover: #79797c;
+	--dark-color: ghostwhite;
+
+	--dark-input-bg: #3b3b3b;
+}

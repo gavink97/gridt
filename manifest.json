@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "gridt",
-    "version": "1.0.3",
+    "version": "1.1.0",
     "description": "CSS Grids for modern web developers.",
     "author": "Gavin Kondrath",
     "homepage_url": "https://github.com/gavink97/gridt",
@@ -37,7 +37,7 @@
             "32": "icons/icon-32.png"
         },
         "default_title": "gridt",
-        "default_popup": "./src/popup/index.html"
+        "default_popup": "./dist/popup/index.html"
     },
 
     "content_security_policy": {
@@ -59,12 +59,12 @@
     },
 
     "options_ui": {
-        "page": "./src/popup/options.html"
+        "page": "./dist/options/index.html"
     },
 
     "browser_specific_settings": {
         "gecko": {
-            "id": "gavin@gav.ink"
+            "id": "gridt@gav.ink"
         }
     }
 }

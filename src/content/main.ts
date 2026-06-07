@@ -1,62 +1,57 @@
-import type { Action, ResponseSender } from '../utils/types.ts';
+import type { Action, Message } from '../utils/types.ts';
 import { CSSGrid, GridPresence, GridVisible, HideGrid, RemoveGrid, ShowGrid } from './grid.ts';
 
-function receiver(request: Action, sender: browser.runtime.MessageSender, sendResponse: ResponseSender) {
-	let visibility: boolean;
+async function receiver(request: Action): Promise<Message> {
+	let message: string;
 
-	if (request) {
+	try {
+		if (!request) {
+			throw new Error('expected a request but received nothing');
+		}
+
 		switch (request.action) {
 			case 'show-grid':
 				if (GridPresence()) {
 					ShowGrid();
-					sendResponse({ type: 'message', response: 'Grid is now visible' });
 				} else {
-					CSSGrid(request.variables);
+					CSSGrid(request);
 					//Canvas(request.variables);
-					sendResponse({ type: 'message', response: 'Grid is now present & visible' });
 				}
+
+				message = 'visible';
 				break;
 
 			case 'hide-grid':
 				HideGrid();
-				sendResponse({ type: 'message', response: 'Grid is now hidden' });
+				message = 'hidden';
 				break;
 
 			case 'update-grid':
 				if (GridVisible()) {
 					RemoveGrid();
-					CSSGrid(request.variables);
+					CSSGrid(request);
 					//Canvas(request.variables);
-					sendResponse({ type: 'message', response: 'Grid has been replaced & updated' });
 				} else {
 					RemoveGrid();
-					sendResponse({ type: 'message', response: 'Grid has been removed' });
 				}
-				break;
 
-			case 'check-grid-visibility':
-				visibility = GridVisible();
-				sendResponse({ type: 'message', response: String(visibility) });
+				message = 'ok';
 				break;
 
 			default:
-				console.error(`Unknown request action ${request.action}`);
-				sendResponse({
-					type: 'error',
-					response: `Unknown request received: ${request.action}`,
-					error: request.action,
-				});
+				throw new Error(`unknown request action ${request.action}`);
 		}
-
-		return true;
+	} catch (error: any) {
+		return Promise.reject({
+			type: 'error',
+			body: String(error),
+		});
 	}
 
-	sendResponse({
-		type: 'error',
-		response: 'Expected a request but received nothing',
-		error: 'Did not receive incoming request',
+	return Promise.resolve({
+		type: 'message',
+		body: message,
 	});
-	return false;
 }
 
 (() => {

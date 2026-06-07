@@ -1,6 +1,6 @@
 .PHONY: run
 run:
-	web-ext run --devtools --browser-console --reload --no-config-discovery
+	web-ext run --devtools --browser-console --reload --no-config-discovery -f '/Applications/Firefox Developer Edition.app'
 
 .PHONY: lint
 lint:

@@ -1,50 +1,39 @@
 export type Input<T> = {
-	id: string;
-	value: T | undefined;
-	default_value: T;
+	elementId: string;
+	value: T;
 };
 
-export type Extra = {
+export type Options = {
+	gridKeybinding: Input<string>;
+	strokeWidth: Input<string>;
+	strokeColor: Input<string>;
+};
+
+export type PopupVariables = {
 	columns: Input<string>;
 	rows: Input<string>;
-	top: Input<string>;
-	bottom: Input<string>;
-	left: Input<string>;
-	right: Input<string>;
-	stroke: Input<string>;
-	color: Input<string>;
-	onReload: Input<boolean>;
-	linkedMargins: Input<boolean>;
-};
-
-export type Config = {
-	columns: Input<number>;
-	rows: Input<number>;
+	margins: Input<string>;
 	gaps: Input<string>;
-	margin: Input<string>;
-	useExtra: Input<boolean>;
-	useWindow: Input<boolean>;
 	attachedElement: Input<string>;
-	extra: Extra;
+	onReload: Input<boolean>;
 };
 
 export type Action = {
 	action: string;
-	variables: Config;
+	popup?: PopupVariables | undefined;
+	options?: Options | undefined;
 };
 
 export type Message = {
 	type: string;
-	response: string;
-	error: string | undefined;
+	body: string;
 };
 
-export type ResponseSender = (response: Partial<Message>) => void;
+export type State = {
+	visible: boolean;
+	needsUpdate: boolean;
+};
 
-export function isInput<T>(item: any, t: (value: any) => value is T): item is Input<T> {
-	return item && typeof item.id === 'string' && (item.value === undefined || t(item.value)) && t(item.default_value);
-}
-
-export function isValidType(value: any): value is string | number | boolean | undefined {
-	return typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean' || value === undefined;
+export async function SendAction(action: Action): Promise<Message> {
+	return await browser.runtime.sendMessage(action);
 }

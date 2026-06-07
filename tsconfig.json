@@ -5,8 +5,6 @@
      "allowImportingTsExtensions": true,
      "rewriteRelativeImportExtensions": true,
      "verbatimModuleSyntax": true,
-
-    "jsx": "react",
-    "jsxFactory": "DOMcreateElement"
+	"types": ["firefox-webext-browser"]
   }
 }

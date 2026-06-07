@@ -1,95 +1,56 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-        <link rel="stylesheet" href="../../dist/popup/styles.css" />
+        <link rel="stylesheet" href="./popup.css" />
     </head>
 
     <body>
         <div id="popup-content">
+			<p class="window">gridt</p>
+
+            <button id="open-options" type="button">
+				<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="cog">
+					<title>Go to settings</title>
+  					<path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" />
+  					<path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+				</svg>
+			</button>
             <div id="settings">
                 <div class="columns">
                     <label for="columns" id="columns-label">Columns:</label>
-                    <input type="number" name="columns" id="columns" value="6" min="1" placeholder="6" title="grid-template-columns"></input>
+                    <input type="text" name="columns" id="columns" value="repeat(6, 1fr)" placeholder="repeat(6, 1fr)" title="grid.grid-template-columns">
                 </div>
 
                 <div class="rows">
                     <label for="rows" id="rows-label">Rows:</label>
-                    <input type="number" name="rows" id="rows" value="8" min="1" placeholder="8" title="grid-template-rows"></input>
+                    <input type="text" name="rows" id="rows" value="repeat(8, 1fr)" placeholder="repeat(8, 1fr)" title="grid.grid-template-rows">
                 </div>
 
-                <div class="extra-columns">
-                    <label for="extra-columns" id="extra-columns-label">Grid-template-columns:</label>
-                    <input type="text" name="extra-columns" id="extra-columns" value="repeat(6, 1fr)" placeholder="repeat(6, 1fr)" title="grid.grid-template-columns"></input>
-                </div>
-
-                <div class="extra-rows">
-                    <label for="extra-rows" id="extra-rows-label">Grid-template-rows:</label>
-                    <input type="text" name="extra-rows" id="extra-rows" value="repeat(8, 1fr)" placeholder="repeat(8, 1fr)" title="grid.grid-template-rows"></input>
+                <div class="margins">
+                    <label for="margin" id="margin-label">Margins:</label>
+                    <input type="text" name="margin" id="margins" value="15px" placeholder="15px" title="margin">
                 </div>
 
                 <div class="gap">
                     <label for="gaps" id="gaps-label">Gaps:</label>
-                    <input type="text" name="gaps" id="gaps" value="20px" placeholder="20px" title="gap"></input>
-                </div>
-
-                <div id="standard-margins">
-                    <label for="margin" id="margin-label">Outside Margin:</label>
-                    <input type="text" name="margin" id="margin" value="15px" placeholder="15px" title="inset"></input>
-                </div>
-
-                <div id="extra-margins">
-                    <label for="extra-top" id="extra-top-label">Top:</label>
-                    <input type="text" name="extra-top" id="extra-top" value="15px" placeholder="15px" title="grid.top"></input>
-
-                    <label for="extra-bottom" id="extra-bottom-label">Bottom:</label>
-                    <input type="text" name="extra-bottom" id="extra-bottom" value="15px" placeholder="15px" title="grid.bottom"></input>
-
-                    <label for="extra-left" id="extra-left-label">Left:</label>
-                    <input type="text" name="extra-left" id="extra-left" value="15px" placeholder="15px" title="grid.left"></input>
-
-                    <label for="extra-right" id="extra-right-label">Right:</label>
-                    <input type="text" name="extra-right" id="extra-right" value="15px" placeholder="15px" title="grid.right"></input>
-                </div>
-
-                <div class="line-stroke">
-                    <label for="extra-stroke" id="extra-stroke-label">Line Width:</label>
-                    <input type="text" name="extra-stroke" id="extra-stroke" value="1px" placeholder="1px" title="line.width"></input>
-                </div>
-
-                <div class="line-color">
-                    <label for="extra-color" id="extra-color-label">Line Color:</label>
-                    <input type="text" name="extra-color" id="extra-color" value="blue" placeholder="blue" title="line.backgroundcolor"></input>
-                </div>
-
-                <div class="link-margins">
-                    <input type="checkbox" id="extra-link-margins" name="extra-link-margins" checked/>
-                    <label for="extra-link-margins" id="extra-link-margins-label">Link Margins</label>
+                    <input type="text" name="gaps" id="gaps" value="20px" placeholder="20px" title="gap">
                 </div>
 
                 <div class="keep-open">
-                    <input type="checkbox" id="extra-keep-open" name="extra-keep-open"/>
-                    <label for="extra-keep-open" id="extra-keep-open-label">Keep open onreload</label>
-                </div>
-
-                <div class="advanced">
-                    <input type="checkbox" id="extra-options" name="extra-options"/>
-                    <label for="extra-options" id="extra-label" title="Show extra options">Show Advanced Options</label>
+                    <input type="checkbox" id="keep-open" name="keep-open">
+                    <label for="keep-open" id="keep-open-label">Keep open on-reload</label>
                 </div>
 
                 <div class="attach">
-                    <input type="checkbox" id="use-window" name="use-window" checked/>
-                    <label for="use-window" id="use-window-label" title="attaches fixed to client window size">Attach to Window</label>
-                    <input class="hidden" type="text" id="append-to-element" name="append-to-element" title="attaches absolute to an element" value="body"/>
+                    <label for="attach" id="attach-to-label" title="attaches fixed to client window size">Attach to:</label>
+                    <input type="text" id="attach-to" name="attach" value="Window" placeholder="Window" title="inset">
                 </div>
             </div>
-
-            <button id="show-grid-button">Show Grid</button>
-            <a id="error-content" class="vanish" href="https://github.com/gavink97/gridt/issues/new?"></a>
-
+            <button id="show-grid-button" type="button">Show Grid</button>
+			<!-- <p id="error-content" ></p> -->
             <a class="kofi" href='https://ko-fi.com/E1E119NG8M'><img height='20' src='../../images/kofi_symbol.webp' alt='Buy Me a Coffee at ko-fi.com' /></a>
-            <a class="logo" href="https://gav.ink">gav.ink</a>
         </div>
-        <script src="../../dist/popup/popup.js" type="text/javascript"></script>
+        <script src="./main.js" type="text/javascript"></script>
     </body>
 </html>

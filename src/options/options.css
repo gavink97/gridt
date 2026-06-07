@@ -1,0 +1,24 @@
+@import "../main.css";
+
+body,
+form {
+	display: flex;
+	flex-direction: column;
+	margin: 1.5rem;
+}
+
+input {
+	width: 60%;
+	height: 1.5rem;
+	margin-bottom: 1rem;
+
+	accent-color: light-dark(var(--light-hover), var(--dark-hover));
+}
+
+input:hover {
+	accent-color: light-dark(var(--light-hover), var(--dark-hover));
+}
+
+#submit {
+	width: 60%;
+}

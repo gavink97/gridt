@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest';
-import { enumerateInput } from '../grid.ts';
+import { EnumerateInput } from '../grid.ts';
 
 test('Test: enumerateInput', () => {
 	const inputs = ['repeat(6, 1fr)', '1fr 1fr 1fr', 'minmax(min-content, 350px) minmax(150px, 1fr) 120px'];
@@ -7,6 +7,6 @@ test('Test: enumerateInput', () => {
 	const expected = [6, 3, 3];
 
 	inputs.forEach((input, index) => {
-		expect(enumerateInput(input)).toBe(expected[index]);
+		expect(EnumerateInput(input)).toBe(expected[index]);
 	});
 });

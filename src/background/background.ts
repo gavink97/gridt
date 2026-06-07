@@ -1,245 +1,287 @@
-import { defaultVariables } from '../utils/default-variables.ts';
-import type { Action, Config, ResponseSender } from '../utils/types.ts';
+import { RetrieveOptions, RetrievePopupVariables, RetrieveState, StoreState } from '../utils/storage.ts';
+import type { Action, Message } from '../utils/types.ts';
+import { GetActiveTab } from '../utils/utils.ts';
 
-let Storage: Config;
-
-function handleError(error: any) {
-	const message = {
-		error: String(error),
-		response: String(error),
-		type: 'error',
-	};
-
-	browser.runtime.sendMessage(message);
-}
-
-function handleResponse(message: any) {
-	const response = {
-		response: String(message),
-		type: 'message',
-	};
-
-	browser.runtime.sendMessage(response);
-	if (!message) {
-		console.error('Expected a response from content script but received nothing.');
-	}
-
-	return message.response;
-}
-
-function messageTab(tabs: browser.tabs.Tab[], message: any): any {
-	const current = tabs[0].id;
-
-	return browser.tabs.sendMessage(current, message).catch((error) => {
-		throw error;
-	});
-}
-
-function inject(tabs: browser.tabs.Tab[], message: any): any {
+async function messageClient(request: Action): Promise<Message | undefined> {
 	const content = ['./dist/content/main.js'];
 
-	return browser.scripting
-		.executeScript({
-			target: { tabId: tabs[0].id, allFrames: true },
-			files: content,
-		})
-		.then(() => messageTab(tabs, message))
-		.catch((error) => {
-			throw error;
-		});
+	const active = await GetActiveTab();
+	if (active === -1) {
+		throw new Error('invalid tab id');
+	}
+
+	await browser.scripting.executeScript({
+		target: { tabId: active, allFrames: true },
+		files: content,
+	});
+
+	const response = await browser.tabs.sendMessage(active, request);
+	if (!response || response.type === 'error') {
+		throw new Error(response ? response.body : 'expected a response from content script but received nothing');
+	}
+
+	return response;
 }
 
-function sendMessageToClient(request: Action, sender: browser.runtime.MessageSender, sendResponse: ResponseSender) {
-	browser.tabs
-		.query({ active: true, currentWindow: true })
-		.then((tabs) => {
-			inject(tabs, request)
-				.then((response: any) => {
-					if (sendResponse) {
-						sendResponse({ type: 'message', response: response });
-					}
-				})
-				.catch((error: any) => {
-					handleError(error);
+async function receiver(request: Action): Promise<Message | boolean> {
+	if (!request) {
+		return false;
+	}
 
-					if (sendResponse) {
-						sendResponse({ type: 'error', response: error, error: error });
-					}
-				});
-		})
-		.catch((error) => {
-			handleError(error);
+	var response: Message | undefined;
+	let message: string;
 
-			if (sendResponse) {
-				sendResponse({
-					type: 'error',
-					response: `An error ocurred when communicating with the content script: ${error}`,
-					error: error.message,
-				});
-			}
-		});
-}
+	try {
+		const active = await GetActiveTab();
+		if (active === -1) {
+			throw new Error('invalid tab id');
+		}
 
-function receiver(request: Action, sender: browser.runtime.MessageSender, sendResponse: ResponseSender) {
-	if (request) {
 		switch (request.action) {
-			case 'check-grid-visibility':
-				sendResponse({ type: 'message', response: String(visible) });
+			case 'hide-grid':
+				response = await messageClient(request);
+				if (!response || response.type === 'error') {
+					throw new Error(
+						response ? response.body : 'expected a response from content script but received nothing',
+					);
+				}
+
+				await StoreState(active, {
+					visible: false,
+					needsUpdate: false,
+				});
+
+				message = response.body;
 				break;
 
-			case 'hide-grid':
-				try {
-					sendMessageToClient(request, sender, sendResponse);
-					visible = false;
-					lastUrl = '';
-					break;
-				} catch {
-					handleError(`An error occured when performing: ${request.action}`);
-					break;
-				}
-
 			case 'show-grid':
-				try {
-					sendMessageToClient(request, sender, sendResponse);
-					getCurrentUrl();
-					visible = true;
-					break;
-				} catch {
-					handleError(`An error occured when performing: ${request.action}`);
-					break;
+				response = await messageClient(request);
+				if (!response || response.type === 'error') {
+					throw new Error(
+						response ? response.body : 'expected a response from content script but received nothing',
+					);
 				}
 
-			case 'update-grid':
-				try {
-					storeVariables(request.variables);
-					sendMessageToClient(request, sender, sendResponse);
-					break;
-				} catch {
-					handleError(`An error occured when performing: ${request.action}`);
-					break;
-				}
+				await StoreState(active, {
+					visible: true,
+					needsUpdate: false,
+				});
+
+				message = response.body;
+				break;
 
 			default:
-				handleError(`Unknown request action ${request.action}`);
-				sendResponse({
-					type: 'error',
-					response: `Unknown request received ${request.action}`,
-					error: `Unknown request received ${request.action}`,
-				});
+				throw new Error(`unknown request action ${request.action}`);
 		}
-		return true;
+	} catch (error: any) {
+		return Promise.reject({
+			type: 'error',
+			body: String(error),
+		});
 	}
-	return false;
-}
 
-function getCurrentUrl() {
-	const gettingCurrent = browser.tabs.query({ active: true, currentWindow: true });
-
-	// this will error if on an invalid tab
-	gettingCurrent.then((tabInfo) => {
-		lastUrl = tabInfo[0].url;
+	return Promise.resolve({
+		type: 'message',
+		body: message,
 	});
 }
 
-function storeVariables(variables: Config) {
-	browser.storage.session.set({ config: variables });
-	Storage = variables;
-}
-
-async function checkOnReload() {
+async function reload(details: browser.webNavigation._OnDOMContentLoadedDetails): Promise<void> {
 	try {
-		const result = await browser.storage.session.get('config');
-		if (!result.config) {
-			await browser.storage.session.set({
-				config: defaultVariables,
-			});
+		if (details.tabId === browser.tabs.TAB_ID_NONE) {
+			throw new Error('invalid tab id');
 		}
 
-		Storage = result.config as Config;
-		if (Storage.extra.onReload.value || Storage.extra.onReload.default_value) {
-			const current = await browser.tabs.query({ active: true, currentWindow: true });
+		const popup = await RetrievePopupVariables();
+		const options = await RetrieveOptions();
+		const state = await RetrieveState(details.tabId);
 
-			if (current[0].url !== lastUrl) {
-				visible = false;
-				return;
-			}
-
-			const request = {
-				action: 'show-grid',
-				variables: Storage,
-			};
-
-			browser.tabs
-				.query({ active: true, currentWindow: true })
-				.then((tabs) => {
-					inject(tabs, request);
-					visible = true;
-				})
-				.catch((error) => {
-					handleError(error);
-					visible = false;
-				});
-		} else {
-			visible = false;
+		if (!state.visible || !popup.onReload.value) {
+			return;
 		}
-	} catch (error) {
-		handleError(error);
-		visible = false;
+
+		const response = await messageClient({
+			action: 'show-grid',
+			popup: popup,
+			options: options,
+		});
+
+		if (!response || response.type === 'error') {
+			throw new Error(response ? response.body : 'Expected a response from content script but received nothing');
+		}
+
+		await StoreState(details.tabId, {
+			visible: true,
+			needsUpdate: false,
+		});
+	} catch (error: any) {
+		console.error(error);
 	}
 }
 
-function checkGridState() {
-	const request = {
-		action: 'check-grid-visibility',
-	};
+async function toggle(): Promise<void> {
+	var response: Message | undefined;
 
-	browser.tabs
-		.query({ active: true, currentWindow: true })
-		.then((tabs) => {
-			inject(tabs, request)
-				.then((response: any) => {
-					visible = response;
-				})
-				.catch((error: any) => {
-					handleError(error);
-				});
-		})
-		.catch((error) => {
-			handleError(error);
+	try {
+		const active = await GetActiveTab();
+		if (active === -1) {
+			throw new Error('invalid tab id');
+		}
+
+		const popup = await RetrievePopupVariables();
+		const options = await RetrieveOptions();
+		const state = await RetrieveState(active);
+
+		response = await messageClient({
+			action: state.visible ? 'hide-grid' : 'show-grid',
+			popup: popup,
+			options: options,
 		});
+
+		if (!response || response.type === 'error') {
+			throw new Error(response ? response.body : 'Expected a response from content script but received nothing');
+		}
+
+		await StoreState(active, {
+			visible: response.body === 'visible',
+			needsUpdate: false,
+		});
+	} catch (error: any) {
+		console.error(error);
+	}
 }
 
-function command() {
-	const request = {
-		action: visible ? 'hide-grid' : 'show-grid',
-		variables: Storage,
-	};
+async function forceUpdate(): Promise<void> {
+	try {
+		const active = await GetActiveTab();
+		if (active === -1) {
+			throw new Error('invalid tab id');
+		}
 
-	receiver(request, undefined, undefined);
+		const state = await RetrieveState(active);
+		if (!state.needsUpdate) {
+			return;
+		}
 
-	handleResponse('Pushing command');
+		if (state.needsUpdate) {
+			const popup = await RetrievePopupVariables();
+			const options = await RetrieveOptions();
+
+			const response = await messageClient({
+				action: 'update-grid',
+				popup: popup,
+				options: options,
+			});
+
+			if (!response || response.type === 'error') {
+				throw new Error(
+					response ? response.body : 'Expected a response from content script but received nothing',
+				);
+			}
+
+			await StoreState(active, {
+				visible: state.visible,
+				needsUpdate: false,
+			});
+		}
+	} catch (error: any) {
+		console.log(error);
+	}
 }
 
-let visible = false;
-let lastUrl: string | undefined;
+async function update(): Promise<void> {
+	try {
+		const popup = await RetrievePopupVariables();
+		const options = await RetrieveOptions();
+
+		const response = await messageClient({
+			action: 'update-grid',
+			popup: popup,
+			options: options,
+		});
+
+		if (!response || response.type === 'error') {
+			throw new Error(response ? response.body : 'Expected a response from content script but received nothing');
+		}
+
+		const active = await GetActiveTab();
+		if (active === -1) {
+			throw new Error('invalid tab id');
+		}
+
+		const tabs = await browser.tabs.query({ currentWindow: true });
+		for (const tab of tabs) {
+			if (tab.id === browser.tabs.TAB_ID_NONE || tab.id === undefined || tab.id === active) {
+				continue;
+			}
+
+			const state = await RetrieveState(tab.id);
+			if (!state.visible) {
+				continue;
+			}
+
+			await StoreState(tab.id, {
+				visible: state.visible,
+				needsUpdate: true,
+			});
+		}
+	} catch {
+		const tabs = await browser.tabs.query({ currentWindow: true });
+
+		for (const tab of tabs) {
+			if (tab.id === browser.tabs.TAB_ID_NONE || tab.id === undefined) {
+				continue;
+			}
+
+			const state = await RetrieveState(tab.id);
+			if (!state.visible) {
+				continue;
+			}
+
+			await StoreState(tab.id, {
+				visible: state.visible,
+				needsUpdate: true,
+			});
+		}
+	}
+}
+
+async function removeFromStorage(tabId: number): Promise<void> {
+	await browser.storage.session.remove(String(tabId));
+}
+
+if (!browser.commands.onCommand.hasListener(toggle)) {
+	browser.commands.onCommand.addListener(toggle);
+}
 
 if (!browser.runtime.onMessage.hasListener(receiver)) {
 	browser.runtime.onMessage.addListener(receiver);
 }
 
-if (!browser.webNavigation.onDOMContentLoaded.hasListener(checkOnReload)) {
-	browser.webNavigation.onDOMContentLoaded.addListener(checkOnReload);
+if (!browser.storage.sync.onChanged.hasListener(update)) {
+	browser.storage.sync.onChanged.addListener(update);
 }
 
-if (!browser.commands.onCommand.hasListener(command)) {
-	browser.commands.onCommand.addListener(command);
+if (!browser.tabs.onActivated.hasListener(forceUpdate)) {
+	browser.tabs.onActivated.addListener(forceUpdate);
 }
 
-(async () => {
-	try {
-		await checkOnReload();
-		checkGridState();
-	} catch (error) {
-		handleError(error);
-	}
-})();
+if (
+	!browser.webNavigation.onDOMContentLoaded.hasListener((details) => {
+		reload(details);
+	})
+) {
+	browser.webNavigation.onDOMContentLoaded.addListener((details) => {
+		reload(details);
+	});
+}
+
+if (
+	!browser.tabs.onRemoved.hasListener((tabId) => {
+		removeFromStorage(tabId);
+	})
+) {
+	browser.tabs.onRemoved.addListener((tabId) => {
+		removeFromStorage(tabId);
+	});
+}

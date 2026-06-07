@@ -1,89 +1,48 @@
-export const defaultVariables = {
+import type { Options, PopupVariables, State } from './types.ts';
+
+export const DefaultPopupVariables: PopupVariables = {
 	columns: {
-		id: 'columns',
-		value: undefined,
-		default_value: 6,
+		elementId: 'columns',
+		value: 'repeat(6, 1fr)',
 	},
 	rows: {
-		id: 'rows',
-		value: undefined,
-		default_value: 8,
+		elementId: 'rows',
+		value: 'repeat(8, 1fr)',
+	},
+	margins: {
+		elementId: 'margins',
+		value: '15px',
 	},
 	gaps: {
-		id: 'gaps',
-		value: undefined,
-		default_value: '20px',
-	},
-	margin: {
-		id: 'margin',
-		value: undefined,
-		default_value: '15px',
-	},
-	useExtra: {
-		id: 'extra-options',
-		value: undefined,
-		default_value: false,
-	},
-	useWindow: {
-		id: 'use-window',
-		value: undefined,
-		default_value: true,
+		elementId: 'gaps',
+		value: '20px',
 	},
 	attachedElement: {
-		id: 'append-to-element',
-		value: undefined,
-		default_value: 'body',
+		elementId: 'attach-to',
+		value: 'Window',
 	},
-	extra: {
-		columns: {
-			id: 'extra-columns',
-			value: undefined,
-			default_value: 'repeat(6, 1fr)',
-		},
-		rows: {
-			id: 'extra-rows',
-			value: undefined,
-			default_value: 'repeat(8, 1fr)',
-		},
-		top: {
-			id: 'extra-top',
-			value: undefined,
-			default_value: '15px',
-		},
-		bottom: {
-			id: 'extra-bottom',
-			value: undefined,
-			default_value: '15px',
-		},
-		left: {
-			id: 'extra-left',
-			value: undefined,
-			default_value: '15px',
-		},
-		right: {
-			id: 'extra-right',
-			value: undefined,
-			default_value: '15px',
-		},
-		stroke: {
-			id: 'extra-stroke',
-			value: undefined,
-			default_value: '1px',
-		},
-		color: {
-			id: 'extra-color',
-			value: undefined,
-			default_value: 'blue',
-		},
-		onReload: {
-			id: 'extra-keep-open',
-			value: undefined,
-			default_value: false,
-		},
-		linkedMargins: {
-			id: 'extra-link-margins',
-			value: undefined,
-			default_value: true,
-		},
+	onReload: {
+		elementId: 'keep-open',
+		value: true,
 	},
+};
+
+export const DefaultOptions: Options = {
+	gridKeybinding: {
+		elementId: 'grid-keybinding',
+		value: 'Ctrl+Period',
+	},
+	strokeWidth: {
+		elementId: 'stroke-width',
+		value: '1px',
+	},
+	strokeColor: {
+		elementId: 'stroke-color',
+		value: 'blue',
+	},
+};
+
+export const DefaultState: State = {
+	visible: false,
+	needsUpdate: false,
 };
