@@ -4,7 +4,6 @@ export type Input<T> = {
 };
 
 export type Options = {
-	gridKeybinding: Input<string>;
 	strokeWidth: Input<string>;
 	strokeColor: Input<string>;
 };

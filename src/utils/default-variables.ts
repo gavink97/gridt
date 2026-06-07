@@ -28,10 +28,6 @@ export const DefaultPopupVariables: PopupVariables = {
 };
 
 export const DefaultOptions: Options = {
-	gridKeybinding: {
-		elementId: 'grid-keybinding',
-		value: 'Ctrl+Period',
-	},
 	strokeWidth: {
 		elementId: 'stroke-width',
 		value: '1px',

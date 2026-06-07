@@ -46,15 +46,13 @@
 
     "commands": {
         "toggle-feature": {
-            "suggested_key": {
-                "default": "Ctrl+Period"
-            },
+            "suggested_key":" Ctrl+Period",
             "description": "Toggle grid"
         }
     },
 
     "background": {
-        "scripts": ["./dist/background/background.js"],
+        "service_worker": "./dist/background/background.js",
         "type": "module"
     },
 
