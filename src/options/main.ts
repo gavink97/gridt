@@ -14,7 +14,7 @@ function getOptions(): Options {
 	const strokeWidth = document.getElementById(def.strokeWidth.elementId) as HTMLInputElement;
 	const width: Input<string> = {
 		elementId: def.strokeWidth.elementId,
-		value: strokeWidth.value ?? def.strokeWidth.value,
+		value: strokeWidth.value ? `${strokeWidth.value}px` : def.strokeWidth.value,
 	};
 
 	const strokeColor = document.getElementById(def.strokeColor.elementId) as HTMLInputElement;
@@ -50,10 +50,136 @@ async function restoreOptions() {
 	const kb = document.getElementById(options.gridKeybinding.elementId) as HTMLInputElement;
 	const width = document.getElementById(options.strokeWidth.elementId) as HTMLInputElement;
 	const color = document.getElementById(options.strokeColor.elementId) as HTMLInputElement;
+	const wrapper = document.getElementById('color-wrapper');
+	if (wrapper) {
+		wrapper.style.backgroundColor = options.strokeColor.value;
+	}
+
+	const preview = document.getElementById('gridt-preview');
+	if (preview) {
+		preview.style.stroke = options.strokeColor.value;
+		preview.style.strokeWidth = options.strokeWidth.value;
+	}
+
+	const keybind = document.getElementById('keybind');
+	if (keybind) {
+		const keyStroke = options.gridKeybinding.value.split('+');
+
+		for (const key of keyStroke) {
+			const label = document.createElement('label');
+			label.setAttribute('for', 'grid-keybinding');
+			label.className = 'key';
+			label.textContent = convert(key);
+			keybind.appendChild(label);
+		}
+	}
 
 	kb.value = options.gridKeybinding.value;
-	width.value = options.strokeWidth.value;
+	width.value = String(options.strokeWidth.value).slice(0, -2);
 	color.value = options.strokeColor.value;
+}
+
+function macOS(): boolean {
+	return 'mac' === navigator.platform.slice(0, 3).toLowerCase();
+}
+
+function capitalize(word: string): string {
+	return `${word.charAt(0).toUpperCase()}${word.slice(1)}`;
+}
+
+function convert(key: string): string {
+	if (macOS()) {
+		switch (key) {
+			case 'Ctrl':
+				return '⌘';
+			case 'Command':
+				return '⌘';
+			case 'MacCtrl':
+				return '⌃';
+			case 'Alt':
+				return '⌥';
+		}
+	}
+
+	switch (key) {
+		case 'Period':
+			return '.';
+		case 'Comma':
+			return ',';
+		default:
+			return capitalize(key);
+	}
+}
+
+function setCommand() {
+	const popup = document.getElementById('popup');
+	if (popup) {
+		popup.style.opacity = '1';
+	}
+
+	const macos = macOS();
+	const keyStroke: string[] = [];
+
+	const handler = (event: KeyboardEvent) => {
+		event.preventDefault();
+
+		const modifiers: string[] = ['Control', 'Alt', 'Shift', 'Meta'];
+
+		if (event.type === 'keydown') {
+			if (!modifiers.includes(event.key)) {
+				if (event.code.includes('Key')) {
+					keyStroke.push(event.code.slice(3));
+				} else {
+					keyStroke.push(event.code);
+				}
+
+				return;
+			}
+
+			if (macos && event.key === 'Meta') {
+				keyStroke.push('Command');
+				return;
+			}
+
+			if (macos && event.key === 'Control') {
+				keyStroke.push('MacCtrl');
+				return;
+			}
+
+			keyStroke.push(event.key);
+		}
+
+		if (event.type === 'keyup') {
+			const keybind = document.getElementById('keybind');
+			if (keybind && keyStroke.length > 1) {
+				keybind.innerHTML = '';
+
+				for (const key of keyStroke) {
+					const label = document.createElement('label');
+					label.setAttribute('for', 'grid-keybinding');
+					label.className = 'key';
+					label.textContent = convert(key);
+					keybind.appendChild(label);
+				}
+
+				const binding = keyStroke.join('+');
+				const input = document.getElementById('grid-keybinding') as HTMLInputElement;
+				if (input) {
+					input.value = binding;
+				}
+			}
+
+			if (popup) {
+				popup.style.opacity = '0';
+			}
+
+			window.removeEventListener('keydown', handler);
+			window.removeEventListener('keyup', handler);
+		}
+	};
+
+	window.addEventListener('keydown', handler);
+	window.addEventListener('keyup', handler);
 }
 
 let hasRun = false;
@@ -61,8 +187,31 @@ let hasRun = false;
 if (!hasRun) {
 	document.addEventListener('DOMContentLoaded', restoreOptions);
 
-	const button = document.getElementById('submit');
-	button?.addEventListener('click', update);
+	document.getElementById('submit')?.addEventListener('click', update);
+
+	document.getElementById('stroke-color')?.addEventListener('input', (event) => {
+		const color = (event.target as HTMLInputElement).value;
+		const wrapper = document.getElementById('color-wrapper');
+		if (wrapper) {
+			wrapper.style.backgroundColor = color;
+		}
+
+		const preview = document.getElementById('gridt-preview');
+		if (preview) {
+			preview.style.stroke = color;
+		}
+	});
+
+	document.getElementById('stroke-width')?.addEventListener('input', (event) => {
+		const range = (event.target as HTMLInputElement).value;
+
+		const preview = document.getElementById('gridt-preview');
+		if (preview) {
+			preview.style.strokeWidth = range;
+		}
+	});
+
+	document.getElementById('grid-keybinding')?.addEventListener('click', setCommand);
 
 	hasRun = true;
 }

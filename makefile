@@ -16,11 +16,11 @@ sign:
 
 .PHONY: watch
 watch:
-	node ./esbuild.config.mjs
+	node ./build.ts
 
 .PHONY: eb
 eb:
-	node ./esbuild.config.mjs --build
+	node ./build.ts --build
 
 .PHONY: playwright
 playwright:

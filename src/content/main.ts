@@ -15,7 +15,6 @@ async function receiver(request: Action): Promise<Message> {
 					ShowGrid();
 				} else {
 					CSSGrid(request);
-					//Canvas(request.variables);
 				}
 
 				message = 'visible';
@@ -30,7 +29,6 @@ async function receiver(request: Action): Promise<Message> {
 				if (GridVisible()) {
 					RemoveGrid();
 					CSSGrid(request);
-					//Canvas(request.variables);
 				} else {
 					RemoveGrid();
 				}

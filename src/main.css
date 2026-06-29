@@ -16,4 +16,20 @@
 	--dark-color: ghostwhite;
 
 	--dark-input-bg: #3b3b3b;
+
+	--options-dark-bg: #23222a;
+	--options-dark-color: #fbfbfe;
+	--options-dark-color-sub: #b5b4bc;
+
+	--options-dark-button: #2b2a32;
+	--options-dark-button-hover: #51525d;
+	--options-dark-button-active: #5b5b65;
+
+	--options-light-bg: #ffffff;
+	--options-light-color: #15141a;
+	--options-light-color-sub: #908f92;
+
+	--options-light-button: #efeff1;
+	--options-light-button-hover: #b6b7b9;
+	--options-light-button-active: #adafb1;
 }
