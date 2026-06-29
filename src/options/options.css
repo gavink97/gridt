@@ -2,23 +2,201 @@
 
 body,
 form {
+	font-size: 1rem;
+	font-family: sans-serif;
 	display: flex;
 	flex-direction: column;
-	margin: 1.5rem;
+	margin: 1rem;
+	width: 634px;
+	overflow: hidden;
+	background-color: light-dark(var(--options-light-bg), var(--options-dark-bg));
 }
 
-input {
-	width: 60%;
-	height: 1.5rem;
-	margin-bottom: 1rem;
-
-	accent-color: light-dark(var(--light-hover), var(--dark-hover));
+.options {
+	display: flex;
+	flex-direction: column;
 }
 
-input:hover {
-	accent-color: light-dark(var(--light-hover), var(--dark-hover));
+.options-div-toggle {
+	display: flex;
+	flex-direction: column;
+	height: 6.5rem;
+}
+
+.options-div-line {
+	display: grid;
+	grid-template-columns: 1;
+	grid-template-rows: repeat(3, 1fr);
+
+	height: 14rem;
+}
+
+.options-hr {
+	width: 100%;
+	margin: 1rem 0;
+	height: 1px;
+	border: none;
+	background-color: light-dark(#bfbfc8, #5b5b65);
+}
+
+.options-label {
+	color: light-dark(var(--options-light-color), var(--options-dark-color));
+
+	padding-bottom: 0.5rem;
+	font-weight: 400;
+}
+
+.explaner {
+	font-size: 1rem;
+	padding-bottom: 0.5rem;
+	margin: 0.25rem 0;
+	color: light-dark(var(--options-light-color-sub), var(--options-dark-color-sub));
+}
+
+#line-pref {
+	grid-row: 1;
+	display: flex;
+	flex-direction: column;
+}
+
+#line-color {
+	grid-row: 3;
+	align-self: center;
+	display: flex;
+	flex-direction: row;
+	justify-content: left;
+	align-items: center;
+	border: none;
+	border-radius: 0.5rem;
+	height: 2rem;
+	width: 8rem;
+	padding: 0.5rem;
+	background-color: light-dark(var(--options-light-button), var(--options-dark-button));
+	transition: background-color 0.3s;
+}
+
+#line-color:hover {
+	background-color: light-dark(var(--options-light-button-hover), var(--options-dark-button-hover));
+}
+
+#line-color:active {
+	background-color: light-dark(var(--options-light-button-active), var(--options-dark-button-active));
+	transform: scale(0.98);
+}
+
+#stroke-color {
+	width: 1rem;
+	height: 1rem;
+	display: block;
+	border: none;
+	opacity: 0;
+}
+
+#color-wrapper {
+	border-radius: 1rem;
+	margin-left: 0.25rem;
+}
+
+.color-label {
+	margin: 0 0.5rem;
+	font-size: 1rem;
+}
+
+.eyedropper {
+	position: relative;
+	left: 0.25rem;
+	height: 1rem;
+}
+
+#stroke-width {
+	grid-row: 2;
+	align-self: center;
+	width: 6rem;
+	-webkit-appearance: none;
+	appearance: none;
+	background: transparent;
+}
+
+#stroke-width::-webkit-slider-runnable-track {
+	height: 0.125rem;
+	background-color: light-dark(var(--options-light-color), var(--options-dark-color));
+	border-radius: 0;
+}
+
+#stroke-width::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	appearance: none;
+	background-color: light-dark(var(--options-light-button), var(--options-dark-button));
+	transition: background-color 0.3s;
+
+	width: 16px;
+	height: 16px;
+	border-radius: 50%;
+	border: 1px solid black;
+	cursor: pointer;
+	margin-top: calc(0.125rem / 2 - 8px);
+}
+
+#stroke-width::-webkit-slider-thumb:hover {
+	background-color: light-dark(var(--options-light-button-hover), var(--options-dark-button-hover));
+}
+
+#stroke-width::-webkit-slider-thumb:active {
+	background-color: light-dark(var(--options-light-button-active), var(--options-dark-button-active));
+}
+
+.save-button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 1.25rem;
+	height: 2.25rem;
+}
+
+.save-text {
+	position: relative;
+	bottom: 0.1rem;
+	font-weight: 200;
+	font-kerning: normal;
+}
+
+.floppy {
+	margin-right: 0.5rem;
+	position: relative;
+	bottom: 1px;
 }
 
 #submit {
-	width: 60%;
+	border: none;
+	border-radius: 0.5rem;
+	width: 6rem;
+	background-color: light-dark(var(--options-light-button), var(--options-dark-button));
+	transition: background-color 0.3s;
+}
+
+#submit:hover {
+	background-color: light-dark(var(--options-light-button-hover), var(--options-dark-button-hover));
+}
+
+#submit:active {
+	background-color: light-dark(var(--options-light-button-active), var(--options-dark-button-active));
+	transform: scale(0.98);
+}
+
+#gridt-preview {
+	position: relative;
+	bottom: 14.85rem;
+	pointer-events: none;
+	width: 634px;
+	height: 180px;
+
+	line {
+		stroke: inherit;
+		stroke-width: inherit;
+	}
+
+	svg {
+		height: inherit;
+		width: inherit;
+	}
 }

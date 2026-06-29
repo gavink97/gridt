@@ -34,7 +34,7 @@ export const DefaultOptions: Options = {
 	},
 	strokeColor: {
 		elementId: 'stroke-color',
-		value: 'blue',
+		value: '#0000FF',
 	},
 };
 

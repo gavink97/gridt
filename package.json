@@ -1,6 +1,6 @@
 {
   "name": "gridt",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "author": "Gavin Kondrath",
   "email": "78187175+gavink97@users.noreply.github.com",
   "homepage": "addons.mozilla.org/en-US/firefox/addon/gridt",
@@ -9,30 +9,32 @@
   "description": "Gridt - A highly customizable CSS Grid overlay for web developers",
   "type": "module",
   "devDependencies": {
-    "@commitlint/cli": "^21.0.2",
-    "@commitlint/config-conventional": "^21.0.2",
-    "@playwright/test": "^1.60.0",
+    "@commitlint/cli": "^21.1.0",
+    "@commitlint/config-conventional": "^21.1.0",
     "@types/chrome": "^0.1.43",
     "@types/firefox-webext-browser": "^143.0.0",
-    "@types/node": "^25.9.2",
+    "@types/node": "^25.9.4",
     "@types/webextension-polyfill": "^0.12.5",
-    "autoprefixer": "^10.5.0",
+    "autoprefixer": "^10.5.2",
     "cssnano": "^7.1.9",
     "dotenv": "^17.4.2",
-    "esbuild": "^0.28.0",
-    "esbuild-plugin-glsl": "^1.4.1",
-    "postcss": "^8.5.15",
+    "esbuild": "^0.28.1",
+    "postcss": "^8.5.16",
     "postcss-autoreset": "^3.1.0",
     "postcss-import": "^16.1.1",
     "postcss-initial": "^4.0.1",
     "postcss-nesting": "^14.0.0",
-    "postcss-preset-env": "^11.3.0",
+    "postcss-preset-env": "^11.3.2",
     "tsx": "^4.22.4",
-    "vitest": "^4.1.8",
-    "web-ext": "10.3",
+    "vitest": "^4.1.9",
+    "web-ext": "^10.4.0",
     "webextension-polyfill": "^0.12.0"
   },
   "scripts": {
     "start:firefox": "web-ext run --source-dir ./extension-dist/"
+  },
+  "allowScripts": {
+    "esbuild@0.28.1": true,
+    "fsevents@2.3.3": true
   }
 }

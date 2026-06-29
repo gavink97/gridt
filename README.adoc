@@ -1,7 +1,7 @@
 = Gridt - A highly customizable CSS Grid overlay for web developers
 ifdef::env-github[]
 Gavin Kondrath <78187175+gavink97@users.noreply.github.com>
-v1.1.0, 2026-06-07
+v1.1.1, 2026-06-29
 :homepage: https://github.com/gavink97/gridt
 endif::[]
 :toc:
@@ -21,12 +21,11 @@ Gridt, a nifty, highly customizable grid overlay perfect for grid based layouts.
 toc::[]
 
 == Features
-    - Customizable Columns, Rows, Grid Gaps, & Outside Margin!
-    - Attach grid to window or html element via CSS Selectors!
-    - Use your own grid-template-columns / rows for uneven grids!
-    - Grid stays open on hot reload!
-    - Adjustable line color & stroke width!
-    - Light Mode & Developer Mode 😎
+    - Customizable Columns, Rows, Grid Gaps, & Outside Margin
+    - Attach grid to window or html element via CSS Selectors
+    - Use your own grid-template-columns / rows for uneven grids
+    - Grid stays open on hot reload
+    - Adjustable line color & stroke width
 
 == Getting Started
 
