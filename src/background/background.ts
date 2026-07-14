@@ -155,13 +155,10 @@ async function forceUpdate(): Promise<void> {
 	try {
 		const active = await GetActiveTab();
 		if (active === -1) {
-			throw new Error('invalid tab id');
+			return;
 		}
 
 		const state = await RetrieveState(active);
-		if (!state.needsUpdate) {
-			return;
-		}
 
 		if (state.needsUpdate) {
 			const popup = await RetrievePopupVariables();
@@ -190,9 +187,14 @@ async function forceUpdate(): Promise<void> {
 }
 
 async function update(): Promise<void> {
+	const popup = await RetrievePopupVariables();
+	const options = await RetrieveOptions();
+
 	try {
-		const popup = await RetrievePopupVariables();
-		const options = await RetrieveOptions();
+		const active = await GetActiveTab();
+		if (active === -1) {
+			throw new Error('invalid tab id');
+		}
 
 		const response = await messageClient({
 			action: 'update-grid',
@@ -204,21 +206,17 @@ async function update(): Promise<void> {
 			throw new Error(response ? response.body : 'Expected a response from content script but received nothing');
 		}
 
-		const active = await GetActiveTab();
-		if (active === -1) {
-			throw new Error('invalid tab id');
-		}
-
 		const tabs = await browser.tabs.query({ currentWindow: true });
 		for (const tab of tabs) {
 			if (tab.id === browser.tabs.TAB_ID_NONE || tab.id === undefined || tab.id === active) {
 				continue;
 			}
 
-			const state = await RetrieveState(tab.id);
-			if (!state.visible) {
+			if (!tab.url?.startsWith('http')) {
 				continue;
 			}
+
+			const state = await RetrieveState(tab.id);
 
 			await StoreState(tab.id, {
 				visible: state.visible,
@@ -233,10 +231,11 @@ async function update(): Promise<void> {
 				continue;
 			}
 
-			const state = await RetrieveState(tab.id);
-			if (!state.visible) {
+			if (!tab.url?.startsWith('http')) {
 				continue;
 			}
+
+			const state = await RetrieveState(tab.id);
 
 			await StoreState(tab.id, {
 				visible: state.visible,
@@ -267,21 +266,21 @@ if (!browser.tabs.onActivated.hasListener(forceUpdate)) {
 }
 
 if (
-	!browser.webNavigation.onDOMContentLoaded.hasListener((details) => {
-		reload(details);
+	!browser.webNavigation.onDOMContentLoaded.hasListener(async (details) => {
+		await reload(details);
 	})
 ) {
-	browser.webNavigation.onDOMContentLoaded.addListener((details) => {
-		reload(details);
+	browser.webNavigation.onDOMContentLoaded.addListener(async (details) => {
+		await reload(details);
 	});
 }
 
 if (
-	!browser.tabs.onRemoved.hasListener((tabId) => {
-		removeFromStorage(tabId);
+	!browser.tabs.onRemoved.hasListener(async (tabId) => {
+		await removeFromStorage(tabId);
 	})
 ) {
-	browser.tabs.onRemoved.addListener((tabId) => {
-		removeFromStorage(tabId);
+	browser.tabs.onRemoved.addListener(async (tabId) => {
+		await removeFromStorage(tabId);
 	});
 }

@@ -149,16 +149,24 @@ if (!browser.runtime.onMessage.hasListener(receiver)) {
 }
 
 if (!listenersAttached) {
-	document.addEventListener('DOMContentLoaded', messenger);
+	document.addEventListener('DOMContentLoaded', async (event: Event) => {
+		await messenger(event);
+	});
 
 	const grid = document.getElementById(gridButton);
-	grid?.addEventListener('click', messenger);
+	grid?.addEventListener('click', async (event: Event) => {
+		await messenger(event);
+	});
 
 	const settingsIcon = document.getElementById('open-options');
-	settingsIcon?.addEventListener('click', openSettings);
+	settingsIcon?.addEventListener('click', async () => {
+		await openSettings();
+	});
 
 	for (const input of document.querySelectorAll('input')) {
-		input.addEventListener('change', messenger);
+		input.addEventListener('change', async (event: Event) => {
+			await messenger(event);
+		});
 	}
 
 	browser.commands.onCommand.addListener(command);

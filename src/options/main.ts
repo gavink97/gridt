@@ -106,6 +106,8 @@ function convert(key: string): string {
 			return '.';
 		case 'Comma':
 			return ',';
+		case 'Control':
+			return 'Ctrl';
 		default:
 			return capitalize(key);
 	}
@@ -185,9 +187,13 @@ function setCommand() {
 let hasRun = false;
 
 if (!hasRun) {
-	document.addEventListener('DOMContentLoaded', restoreOptions);
+	document.addEventListener('DOMContentLoaded', async () => {
+		await restoreOptions();
+	});
 
-	document.getElementById('submit')?.addEventListener('click', update);
+	document.getElementById('submit')?.addEventListener('click', async (event: Event) => {
+		await update(event);
+	});
 
 	document.getElementById('stroke-color')?.addEventListener('input', (event) => {
 		const color = (event.target as HTMLInputElement).value;

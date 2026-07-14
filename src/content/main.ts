@@ -36,6 +36,11 @@ async function receiver(request: Action): Promise<Message> {
 				message = 'ok';
 				break;
 
+			case 'remove-grid':
+				RemoveGrid();
+				message = 'ok';
+				break;
+
 			default:
 				throw new Error(`unknown request action ${request.action}`);
 		}
@@ -52,7 +57,7 @@ async function receiver(request: Action): Promise<Message> {
 	});
 }
 
-(() => {
+(async () => {
 	if (window.hasRun) {
 		return;
 	}
